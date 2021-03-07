@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+}
+
+@section Styles{
+
+    <style type="text/css">
+        .field-validation-error{
+            color: red !important;
+        }
+    </style>
+
+}
+
+<div class="panel-body">
+
+    @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <p>Você precisa efetuar o login para acessar o exemplo!</p>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <label>E-mail</label>
+                <input class="form-control" name="email" type="text" autofocus />
+                @Html.ValidationMessage("email")
+            </div>
+
+            <div class="col-md-6">
+                <p>
+                    Obs*: apenas exemplo, informe um dos e-mails = "teste@gmail.com", "teste2@gmail.com", "teste3@gmail.com"
+                </p>
+                <p>
+                    Obs*: apenas exemplo, informe a senha = "123456" (para todos os e-mails)
+                </p>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <label>Senha</label>
+                <input class="form-control" name="password" type="password" />
+                @Html.ValidationMessage("password")
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6" style="margin-top: 15px !important;">
+                <button type="submit" class="btn btn-primary">Logar</button>
+            </div>
+
+        </div>
+
+    }
+
+</div>
+

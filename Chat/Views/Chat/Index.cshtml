@@ -1,0 +1,79 @@
+﻿@model Chat.Domain.Models.ViewModels.UserViewModel
+@{
+    ViewData["Title"] = "Chat";
+}
+
+@section Styles{
+    <link href="/views/Chat.Index.css" rel="stylesheet" />
+}
+
+@section Scripts{
+
+    <script src="/js/signalr/dist/browser/signalr.js"></script>
+    <script src="/views/Chat.Index.js"></script>
+}
+
+<h5>Bem-vindo @Html.Raw(@Model.User.Name) </h5>
+@*<h6><small>*Obs: você só pode criar salas e falar com outros usuários (não consigo mesmo)</small></h6>*@
+<h6><small>*Obs: o adicional de criar salas não tive tempo de fazer, correria rs</small></h6>
+
+<div class="panel-body" id="mainapp">
+
+    <input id="my_user_id" value="@Model.User.Id" type="hidden" />
+
+    <div class="row">
+
+        <div class="col-md-2" id="sustain-contacts">
+
+            <ul>
+
+                <li>
+                    <label>
+                        <b>Usuários Logado</b>
+                        <button class="btn btn-primary btn-sm" v-on:click="setCreateRoom" disabled> {{ text_button }}</button>
+                    </label>
+                </li>
+
+                <li v-for="obj in connected_users" class="user" :title="title_li" v-on:click="createPersonalChat(obj.user.id)" :id="'select_chat_'+my_user_id+'_'+obj.user.id">
+
+                    <input type="checkbox" class="chk_create_room" :value="obj.user.id" :id="'chk'+obj.user.id" v-show="create_room" v-if="obj.user.id != my_user_id" />
+                    <label :for="'chk'+obj.user.id"> {{ obj.user.id === my_user_id ? 'EU' : obj.user.name}} <i class="online"></i></label>
+
+                </li>
+            </ul>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="col-md-12">
+
+                <ul id="sustain-chats">
+                    <li><b>{{ text_chat }}</b></li>
+                </ul>
+
+            </div>
+
+            <div class="col-md-12" id="sustain-message">
+
+                <div class="input-group">
+                    <input type="text" placeholder="Descreva sua mensagem" class="form-control" id="message">
+                    <div class="input-group-append">
+                        <span class="input-group-text btn-primary" id="send-message" v-on:click="sendMessage">Enviar</span>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <small>Desenvolvido por Bruno Henrique.</small>
+    </div>
+
+
+</div>
+
