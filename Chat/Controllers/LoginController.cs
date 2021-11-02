@@ -18,7 +18,7 @@ namespace Chat.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login(string email, string password)
         {
-            LoginService login_service = new LoginService();
+            LoginService loginService = new LoginService();
 
             if (string.IsNullOrWhiteSpace(email))
                 ModelState.AddModelError("email", "Campo obrigatório");
@@ -26,16 +26,16 @@ namespace Chat.Controllers
             if (string.IsNullOrWhiteSpace(password))
                 ModelState.AddModelError("password", "Campo obrigatório");
 
-            UserViewModel user_vmodel = null;
+            UserViewModel userVModel = null;
             if (ModelState.IsValid)
             {
                 password = password != null ? EncryptionHelper.GetMD5FromString(password).ToLower() : password;
 
-                bool b = login_service.IsUserValid(email, password);
+                bool b = loginService.IsUserValid(email, password);
                 if (b)
                 {
-                    user_vmodel = login_service.GetUser(email);
-                    HttpContext.Session.SetJsonSesssion<UserViewModel>("user", user_vmodel);
+                    userVModel = loginService.GetUser(email);
+                    HttpContext.Session.SetJsonSesssion<UserViewModel>("user", userVModel);
                     return RedirectToAction("Index", "Chat");
                 }
             }

@@ -9,8 +9,8 @@ namespace Chat.Extensions
     {
         public static void SetJsonSesssion<T>(this ISession session, string key, T obj)
         {
-            var json_obj = JsonConvert.SerializeObject(obj);
-            session.SetString(key, json_obj);
+            var jsonObj = JsonConvert.SerializeObject(obj);
+            session.SetString(key, jsonObj);
 
         }
 
@@ -30,8 +30,8 @@ namespace Chat.Extensions
                     return default(T);
 
                 // Retrieve
-                string json_obj = session.GetString(key);
-                T obj = JsonConvert.DeserializeObject<T>(json_obj);
+                string jsonObj = session.GetString(key);
+                T obj = JsonConvert.DeserializeObject<T>(jsonObj);
                 return obj;
             }
             catch

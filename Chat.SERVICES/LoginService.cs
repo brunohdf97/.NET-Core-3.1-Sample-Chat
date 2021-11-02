@@ -8,10 +8,10 @@ namespace Chat.Services
 {
     public class LoginService
     {
-        private readonly UserRepository _user_repository = null;
+        private readonly UserRepository _userRepository = null;
 
         //if there is no database, use those users as example to connect into chat
-        private readonly List<UserViewModel> _user_examples = new List<UserViewModel>()
+        private readonly List<UserViewModel> _userExamples = new List<UserViewModel>()
         {
             new UserViewModel(){
             User = new User()
@@ -46,7 +46,7 @@ namespace Chat.Services
 
         public LoginService()
         {
-            _user_repository = new UserRepository();
+            _userRepository = new UserRepository();
         }
 
         public UserViewModel GetUser(string email)
@@ -55,10 +55,10 @@ namespace Chat.Services
             //if (!string.IsNullOrWhiteSpace(email))
             //return _user_repository.GetAsQueryable().Select(a => new UserViewModel() { User = a }).FirstOrDefault(a => a.User.Email == email);
 
-            return _user_examples.FirstOrDefault(a => a.User.Email == email);
+            return _userExamples.FirstOrDefault(a => a.User.Email == email);
         }
 
-        public bool IsUserValid(UserViewModel user_vmodel)
+        public bool IsUserValid(UserViewModel userVModel)
         {
             //if you runs migration it will work (mysql running on machine with correct connection string)
             //if (user_vmodel != null)
@@ -69,7 +69,7 @@ namespace Chat.Services
             //}
 
             //otherwise as its only a test
-            if (user_vmodel != null && _user_examples.Any(a => a.User.Email == user_vmodel.User.Email))
+            if (userVModel != null && _userExamples.Any(a => a.User.Email == userVModel.User.Email))
                 return true;
 
             return false;
@@ -83,7 +83,7 @@ namespace Chat.Services
             //    return true;
 
             //otherwise as its only a test
-            if (_user_examples.Any(a => a.User.Email == email && a.User.Password == password))
+            if (_userExamples.Any(a => a.User.Email == email && a.User.Password == password))
                 return true;
 
             return false;

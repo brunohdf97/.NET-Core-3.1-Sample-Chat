@@ -22,17 +22,17 @@ namespace Chat.Signalr.Hubs
             }
         }
 
-        public void Add(UserViewModel user_vmodel, string connectionId)
+        public void Add(UserViewModel userVmodel, string connectionId)
         {
             lock (_connections)
             {
 
                 KeyValuePair<UserViewModel, HashSet<string>> keypar;
-                if (!_connections.TryGetValue(user_vmodel.User.Id, out keypar))
+                if (!_connections.TryGetValue(userVmodel.User.Id, out keypar))
                 {
                     HashSet<string> connections = new HashSet<string>();
-                    keypar = new KeyValuePair<UserViewModel, HashSet<string>>(user_vmodel, connections);
-                    _connections.Add(user_vmodel.User.Id, keypar);
+                    keypar = new KeyValuePair<UserViewModel, HashSet<string>>(userVmodel, connections);
+                    _connections.Add(userVmodel.User.Id, keypar);
                 }
 
                 lock (keypar.Value)
@@ -53,43 +53,43 @@ namespace Chat.Signalr.Hubs
 
         public HashSet<string> GetAllConnectionIds()
         {
-            HashSet<string> connection_ids = new HashSet<string>();
+            HashSet<string> connectionIds = new HashSet<string>();
             foreach (var connection in _connections.Values)
             {
-                foreach (string connection_id in connection.Value)
+                foreach (string connectionId in connection.Value)
                 {
-                    connection_ids.Add(connection_id);
+                    connectionIds.Add(connectionId);
                 }
 
             }
 
-            return connection_ids;
+            return connectionIds;
         }
 
-        public List<string> GetAllConnectionIdsAsList(int[] users_id = null)
+        public List<string> GetAllConnectionIdsAsList(int[] usersId = null)
         {
 
-            List<string> connection_ids = new List<string>();
+            List<string> connectionIds = new List<string>();
 
-            var values = users_id == null || users_id.Length == 0 
+            var values = usersId == null || usersId.Length == 0 
                 ? _connections.Values 
-                : _connections.Values.Where(a => users_id.Contains(a.Key.User.Id));
+                : _connections.Values.Where(a => usersId.Contains(a.Key.User.Id));
 
             foreach (var connection in values)
             {
-                foreach (string connection_id in connection.Value)
+                foreach (string connectionId in connection.Value)
                 {
-                    connection_ids.Add(connection_id);
+                    connectionIds.Add(connectionId);
                 }
             }
 
-            return connection_ids;
+            return connectionIds;
         }
 
-        public List<string> GetConnections(UserViewModel user_vmodel)
+        public List<string> GetConnections(UserViewModel userVModel)
         {
             KeyValuePair<UserViewModel, HashSet<string>> keypar;
-            if (_connections.TryGetValue(user_vmodel.User.Id, out keypar))
+            if (_connections.TryGetValue(userVModel.User.Id, out keypar))
             {
                 return keypar.Value.ToList();
             }
@@ -97,12 +97,12 @@ namespace Chat.Signalr.Hubs
             return new List<string>();
         }
 
-        public void Remove(UserViewModel user_vmodel, string connectionId)
+        public void Remove(UserViewModel userVModel, string connectionId)
         {
             lock (_connections)
             {
                 KeyValuePair<UserViewModel, HashSet<string>> keypar;
-                if (!_connections.TryGetValue(user_vmodel.User.Id, out keypar))
+                if (!_connections.TryGetValue(userVModel.User.Id, out keypar))
                 {
                     return;
                 }
@@ -113,7 +113,7 @@ namespace Chat.Signalr.Hubs
 
                     if (keypar.Value.Count == 0)
                     {
-                        _connections.Remove(user_vmodel.User.Id);
+                        _connections.Remove(userVModel.User.Id);
                     }
                 }
             }
@@ -127,18 +127,18 @@ namespace Chat.Signalr.Hubs
 
         public void GetAllConnectedUsers()
         {
-            var connected_users = _connections.GetAllConnectedUsers();
+            var connectedUsers = _connections.GetAllConnectedUsers();
 
-            Clients.Caller.SendAsync("ReceiveAllConnectedUsers", connected_users);
+            Clients.Caller.SendAsync("ReceiveAllConnectedUsers", connectedUsers);
         }
 
         public void SendChatMessage(string from, string to, string message)
         {
-            int[] in_to = to.Split(',').Select(int.Parse).ToArray();
-            int[] in_users_id = in_to.Union(new int[] { from.ToInt() }).ToArray();
+            int[] inTo = to.Split(',').Select(int.Parse).ToArray();
+            int[] inUsersId = inTo.Union(new int[] { from.ToInt() }).ToArray();
 
-            var connection_ids = _connections.GetAllConnectionIdsAsList(in_users_id);
-            Clients.Clients(connection_ids).SendAsync("ReceiveMessage", from, to, message);
+            var connectionIds = _connections.GetAllConnectionIdsAsList(inUsersId);
+            Clients.Clients(connectionIds).SendAsync("ReceiveMessage", from, to, message);
         }
 
         //public void SendChatGroupMessage(string groupid, string message)
@@ -159,13 +159,13 @@ namespace Chat.Signalr.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            UserViewModel logged_user = Context.GetHttpContext().Session.GetJsonSession<UserViewModel>("user");
+            UserViewModel loggedUser = Context.GetHttpContext().Session.GetJsonSession<UserViewModel>("user");
 
             try
             {
-                _connections.Add(logged_user, Context.ConnectionId);
+                _connections.Add(loggedUser, Context.ConnectionId);
 
-                var connection_ids = _connections.GetAllConnectionIdsAsList();
+                var connectionIds = _connections.GetAllConnectionIdsAsList();
 
                 await Clients.All.SendAsync("ConnectedUsersUpdated");
 
@@ -180,11 +180,11 @@ namespace Chat.Signalr.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            UserViewModel logged_user = Context.GetHttpContext().Session.GetJsonSession<UserViewModel>("user");
+            UserViewModel loggedUser = Context.GetHttpContext().Session.GetJsonSession<UserViewModel>("user");
 
             try
             {
-                _connections.Remove(logged_user, Context.ConnectionId);
+                _connections.Remove(loggedUser, Context.ConnectionId);
 
                 await Clients.All.SendAsync("ConnectedUsersUpdated");
             }

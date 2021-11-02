@@ -13,13 +13,13 @@ namespace Chat.Controllers
             LoginService _service = new LoginService();
 
             string key = "user";
-            UserViewModel user_session = HttpContext.Session.ExistJsonSession(key)
+            UserViewModel userSession = HttpContext.Session.ExistJsonSession(key)
                 ? HttpContext.Session.GetJsonSession<UserViewModel>(key)
                 : null;
 
-            bool is_valid = _service.IsUserValid(user_session);
+            bool isValid = _service.IsUserValid(userSession);
 
-            if (!is_valid)
+            if (!isValid)
             {
                 context.Result = new RedirectResult("/Login/Index");
             }
