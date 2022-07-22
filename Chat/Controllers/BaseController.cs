@@ -1,4 +1,5 @@
-﻿using Chat.Domain.Models.ViewModels;
+﻿using Chat.Domain.Models.DTOS;
+using Chat.Domain.Models.ViewModels;
 using Chat.Extensions;
 using Chat.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -8,16 +9,20 @@ namespace Chat.Controllers
 {
     public class BaseController : Controller
     {
+        private readonly LoginService _loginService;
+        public BaseController()
+        {
+            _loginService = new LoginService();
+        }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            LoginService _service = new LoginService();
-
             string key = "user";
-            UserViewModel userSession = HttpContext.Session.ExistJsonSession(key)
-                ? HttpContext.Session.GetJsonSession<UserViewModel>(key)
+            UsuarioLogadoDTO userSession = HttpContext.Session.ExistJsonSession(key)
+                ? HttpContext.Session.GetJsonSession<UsuarioLogadoDTO>(key)
                 : null;
 
-            bool isValid = _service.IsUserValid(userSession);
+            bool isValid = _loginService.IsUserValid(userSession);
 
             if (!isValid)
             {

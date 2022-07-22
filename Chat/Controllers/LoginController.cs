@@ -9,6 +9,12 @@ namespace Chat.Controllers
 {
     public class LoginController : Controller
     {
+        private readonly LoginService _loginService;
+        public LoginController()
+        {
+            _loginService = new LoginService();
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -18,8 +24,6 @@ namespace Chat.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login(string email, string password)
         {
-            LoginService loginService = new LoginService();
-
             if (string.IsNullOrWhiteSpace(email))
                 ModelState.AddModelError("email", "Campo obrigatório");
 
@@ -31,10 +35,10 @@ namespace Chat.Controllers
             {
                 password = password != null ? EncryptionHelper.GetMD5FromString(password).ToLower() : password;
 
-                bool b = loginService.IsUserValid(email, password);
+                bool b = _loginService.IsUserValid(email, password);
                 if (b)
                 {
-                    userVModel = loginService.GetUser(email);
+                    userVModel = _loginService.GetUser(email);
                     HttpContext.Session.SetJsonSesssion<UserViewModel>("user", userVModel);
                     return RedirectToAction("Index", "Chat");
                 }

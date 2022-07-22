@@ -1,12 +1,14 @@
-﻿using Chat.Domain.Models.Tables;
+﻿using Chat.Domain.Models.DTOS;
+using Chat.Domain.Models.Tables;
 using Chat.Domain.Models.ViewModels;
 using Chat.Infra.Repositories;
+using Chat.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Chat.Services
 {
-    public class LoginService
+    public class LoginService : ILoginService
     {
         private readonly UserRepository _userRepository = null;
 
@@ -58,7 +60,7 @@ namespace Chat.Services
             return _userExamples.FirstOrDefault(a => a.User.Email == email);
         }
 
-        public bool IsUserValid(UserViewModel userVModel)
+        public bool IsUserValid(UsuarioLogadoDTO usuario)
         {
             //if you runs migration it will work (mysql running on machine with correct connection string)
             //if (user_vmodel != null)
@@ -69,7 +71,7 @@ namespace Chat.Services
             //}
 
             //otherwise as its only a test
-            if (userVModel != null && _userExamples.Any(a => a.User.Email == userVModel.User.Email))
+            if (usuario != null && _userExamples.Any(a => a.User.Email == usuario.Usuario.Email))
                 return true;
 
             return false;
